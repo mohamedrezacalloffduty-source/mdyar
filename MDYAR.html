@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MDYAR</title>
+<style>
+body {
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f2f4f7;
+  color: #222;
+  margin: 0;
+  line-height: 1.8;
+}
+header {
+  background: #315b9a;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
+main {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 0 12px;
+}
+section {
+  background: white;
+  padding: 16px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+h2 { font-size: 19px; color: #315b9a; }
+label { display: block; margin-top: 10px; }
+input, select, textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font: inherit;
+}
+button {
+  background: #315b9a;
+  color: white;
+  border: 0;
+  border-radius: 7px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font: inherit;
+}
+.result, .message {
+  background: #edf2fa;
+  padding: 10px;
+  border-radius: 7px;
+  margin-top: 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+small { color: #666; }
+img { max-width: 100%; margin-top: 10px; }
+footer {
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+  padding: 18px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MDYAR</h1>
+  <div>کمک‌درسی و گروه مطالعه</div>
+</header>
+
+<main>
+  <section>
+    <h2>سؤال درسی</h2>
+
+    <label>پایه تحصیلی</label>
+    <select id="grade">
+      <option>هفتم</option>
+      <option>هشتم</option>
+      <option>نهم</option>
+      <option>دهم</option>
+      <option>یازدهم</option>
+      <option>دوازدهم</option>
+    </select>
+
+    <label>درس</label>
+    <select id="subject">
+      <option>ریاضی</option>
+      <option>علوم</option>
+      <option>فارسی</option>
+      <option>زبان انگلیسی</option>
+      <option>عربی</option>
+      <option>مطالعات اجتماعی</option>
+      <option>درس دیگر</option>
+    </select>
+
+    <label>سؤالت رو بنویس</label>
+    <textarea id="question" rows="4"
+      placeholder="سؤالت رو اینجا بنویس..."></textarea>
+
+    <label>عکس کتاب</label>
+    <input id="photo" type="file" accept="image/*">
+    <img id="preview" hidden alt="عکس کتاب">
+
+    <button onclick="prepareQuestion()">آماده کردن سؤال</button>
+    <div id="answer" class="result">اینجا اطلاعات سؤال نمایش داده می‌شود.</div>
+    <small>پاسخ هوش مصنوعی هنوز فعال نیست.</small>
+  </section>
+
+  <section>
+    <h2>افزودن عضو</h2>
+
+    <label>نام</label>
+    <input id="memberName" placeholder="نام عضو">
+
+    <label>شماره موبایل</label>
+    <input id="phone" type="tel" placeholder="09xxxxxxxxx">
+
+    <button onclick="inviteMember()">آماده کردن دعوت</button>
+    <div id="inviteResult" class="result" hidden></div>
+    <small>این بخش فعلاً نمایشی است و پیامک نمی‌فرستد.</small>
+  </section>
+
+  <section>
+    <h2>گروه مطالعه</h2>
+    <div id="messages">
+      <div class="message">سارا: کسی تمرین ریاضی رو حل کرده؟</div>
+      <div class="message">آرین: برای علوم نمونه‌سؤال دارید؟</div>
+    </div>
+
+    <label>پیام جدید</label>
+    <input id="chatText" placeholder="پیامت رو بنویس...">
+    <button onclick="sendMessage()">ارسال پیام</button>
+    <small>پیام‌ها فقط در همین صفحه دیده می‌شوند.</small>
+  </section>
+</main>
+
+<footer>
+  <div>سازنده وب‌سایت: محمد رضا پورمحمد</div>
+  <div>مدرسه: رضوی خسرو شاهی</div>
+  <div>MDYAR</div>
+</footer>
+
+<script>
+const photoInput = document.getElementById("photo");
+const preview = document.getElementById("preview");
+
+photoInput.addEventListener("change", function() {
+  const file = this.files[0];
+  if (!file) return;
+  preview.src = URL.createObjectURL(file);
+  preview.hidden = false;
+});
+
+function prepareQuestion() {
+  const grade = document.getElementById("grade").value;
+  const subject = document.getElementById("subject").value;
+  const question = document.getElementById("question").value.trim();
+
+  if (!question && !photoInput.files.length) {
+    alert("سؤال بنویس یا عکس انتخاب کن.");
+    return;
+  }
+
+  document.getElementById("answer").textContent =
+    "پایه: " + grade +
+    "\nدرس: " + subject +
+    "\nسؤال: " + (question || "عکس کتاب انتخاب شده") +
+    "\n\nاین نسخه هنوز به هوش مصنوعی وصل نیست.";
+}
+
+function inviteMember() {
+  const name = document.getElementById("memberName").value.trim() || "عضو جدید";
+  const phone = document.getElementById("phone").value.trim();
+
+  if (!/^\+?[0-9۰-۹]{10,15}$/.test(phone.replace(/[\s-]/g, ""))) {
+    alert("شماره موبایل را درست وارد کن.");
+    return;
+  }
+
+  const result = document.getElementById("inviteResult");
+  result.textContent =
+    "دعوت آماده شد (نمایشی)" +
+    "\nنام: " + name +
+    "\nشماره: " + phone +
+    "\nپیامکی ارسال نشده است.";
+  result.hidden = false;
+}
+
+function sendMessage() {
+  const input = document.getElementById("chatText");
+  const text = input.value.trim();
+  if (!text) return;
+
+  const message = document.createElement("div");
+  message.className = "message";
+  message.textContent = "من: " + text;
+
+  document.getElementById("messages").appendChild(message);
+  input.value = "";
+}
+</script>
+
+</body>
+</html>
